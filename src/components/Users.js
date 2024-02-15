@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 
 const Users = () => {
@@ -7,22 +6,26 @@ const Users = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const usersResponse = await axios.get('https://jsonplaceholder.typicode.com/users');
-      const usersData = usersResponse.data;
-      
-      const usersWithTodosPromises = usersData.map(async (user) => {
-        const todosResponse = await axios.get(`https://jsonplaceholder.typicode.com/todos?userId=${user.id}`);
-        user.todos = todosResponse.data;
-        return user;
-      });
-
-      const usersWithTodos = await Promise.all(usersWithTodosPromises);
-      
-      setUsers(usersWithTodos);
+      try {
+        const usersAns = await fetch('https://jsonplaceholder.typicode.com/users').then(data => data.json());
+        const usersData = usersAns;
+  
+        const usersWithTodos = usersData.map(async (user) => {
+          const todosAns = await fetch(`https://jsonplaceholder.typicode.com/todos?userId=${user.id}`).then(data => data.json());
+          user.todos = todosAns;
+          return user;
+        });
+  
+        const usersTodos = await Promise.all(usersWithTodos);
+  
+        setUsers(usersTodos);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
-
+  
     fetchData();
-  }, []);
+  }, []);  
 
   const getTotalTodos = (todos) => {
     return todos.length;

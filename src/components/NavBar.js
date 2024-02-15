@@ -8,7 +8,7 @@ const NavBar = () => {
     <AppBar position="static">
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 3, backgroundColor: '#161A30' }}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'white' }}>
-          POWERPUFF APPLICATION
+          NEXT JS APPLICATION
         </Typography>
         <Tabs>
           <Link href="/" passHref>

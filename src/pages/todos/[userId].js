@@ -1,10 +1,8 @@
 import { useRouter } from 'next/router';
-import axios from 'axios';
 import { Button, Typography, List, ListItem, Card, CardContent } from '@mui/material';
 
 const TodosPage = ({ todos, userName }) => {
   const router = useRouter();
-  const { userId } = router.query;
 
   const handleBack = () => {
     router.push('/users');
@@ -34,18 +32,28 @@ const TodosPage = ({ todos, userName }) => {
 export async function getServerSideProps({ params }) {
   const { userId } = params;
 
-  const userResponse = await axios.get(`https://jsonplaceholder.typicode.com/users/${userId}`);
-  const userName = userResponse.data.name;
+  try {
+    const userAns = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`).then(data => data.json());
+    const userName = userAns.name;
 
-  const response = await axios.get(`https://jsonplaceholder.typicode.com/todos?userId=${userId}`);
-  const todos = response.data;
+    const res = await fetch(`https://jsonplaceholder.typicode.com/todos?userId=${userId}`).then(data => data.json());
+    const todos = res;
 
-  return {
-    props: {
-      todos,
-      userName,
-    },
-  };
+    return {
+      props: {
+        todos,
+        userName,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return {
+      props: {
+        todos: [],
+        userName: '',
+      },
+    };
+  }
 }
 
 export default TodosPage;

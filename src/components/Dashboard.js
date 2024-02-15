@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Grid, Typography, Card, CardContent, Container } from '@mui/material';
 import Chart from './Chart';
 import PeopleIcon from '@mui/icons-material/People';
@@ -17,23 +16,27 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [users, posts, comments, todos] = await Promise.all([
-        axios.get('https://jsonplaceholder.typicode.com/users'),
-        axios.get('https://jsonplaceholder.typicode.com/posts'),
-        axios.get('https://jsonplaceholder.typicode.com/comments'),
-        axios.get('https://jsonplaceholder.typicode.com/todos')
-      ]);
-
-      setStats({
-        users: users.data.length,
-        posts: posts.data.length,
-        comments: comments.data.length,
-        todos: todos.data.length
-      });
+      try {
+        const [users, posts, comments, todos] = await Promise.all([
+          fetch('https://jsonplaceholder.typicode.com/users').then(data => data.json()),
+          fetch('https://jsonplaceholder.typicode.com/posts').then(data => data.json()),
+          fetch('https://jsonplaceholder.typicode.com/comments').then(data => data.json()),
+          fetch('https://jsonplaceholder.typicode.com/todos').then(data => data.json())
+        ]);
+  
+        setStats({
+          users: users.length,
+          posts: posts.length,
+          comments: comments.length,
+          todos: todos.length
+        });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
-
+  
     fetchData();
-  }, []);
+  }, []);  
 
   const chartData = [
     { name: 'Users', value: stats.users },

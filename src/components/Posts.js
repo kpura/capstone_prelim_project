@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { List, ListItem, ListItemText, Typography, Card, CardContent, Collapse, Paper, Container, Link } from '@mui/material';
 import { useRouter } from 'next/router';
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
-  const [expandedPostId, setExpandedPostId] = useState(null);
+  const [PostId, setPostId] = useState(null);
   const [comments, setComments] = useState([]);
   const [users, setUsers] = useState([]);
   const router = useRouter();
@@ -13,29 +12,30 @@ const Posts = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [postsResponse, usersResponse] = await Promise.all([
-          axios.get('https://jsonplaceholder.typicode.com/posts'),
-          axios.get('https://jsonplaceholder.typicode.com/users')
+        const [postsAns, usersAns] = await Promise.all([
+          fetch('https://jsonplaceholder.typicode.com/posts').then(data => data.json()),
+          fetch('https://jsonplaceholder.typicode.com/users').then(data => data.json())
         ]);
-
-        setPosts(postsResponse.data);
-        setUsers(usersResponse.data);
+  
+        setPosts(postsAns);
+        setUsers(usersAns);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
+  
     fetchData();
-  }, []);
+  }, []);  
 
   const handleViewComments = async (postId) => {
-    if (expandedPostId === postId) {
-      setExpandedPostId(null);
+    if (PostId === postId) {
+      setPostId(null);
       setComments([]);
     } else {
-      setExpandedPostId(postId);
-      const response = await axios.get(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`);
-      setComments(response.data);
+      setPostId(postId);
+      const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`);
+      const commentsData = await res.json();
+      setComments(commentsData);
     }
   };
 
@@ -53,10 +53,10 @@ const Posts = () => {
                 <ListItemText primary={post.title} secondary={post.body} />
                 <br />
                 <Link href="#" onClick={() => handleViewComments(post.id)} underline="none" style={{ fontFamily: 'Bahnschrift', fontSize: '15px'}}>
-                  {expandedPostId === post.id ? 'HIDE COMMENTS' : 'VIEW COMMENTS'}
+                  {PostId === post.id ? 'HIDE COMMENTS' : 'VIEW COMMENTS'}
                 </Link>
               </CardContent>
-              <Collapse in={expandedPostId === post.id} timeout="auto" unmountOnExit>
+              <Collapse in={PostId === post.id} timeout="auto" unmountOnExit>
                 <CardContent>
                   <List disablePadding>
                     {comments.map(comment => (
