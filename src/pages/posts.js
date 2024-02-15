@@ -1,16 +1,16 @@
-import Dashboard from '../components/Dashboard';
+import Posts from '../components/Posts';
 import NavBar from '../components/NavBar';
 import { Container } from '@mui/material';
 
-const HomePage = () => {
+const PostsPage = () => {
   return (
     <div>
       <NavBar />
       <Container>
-        <Dashboard />
-      </Container>  
+        <Posts />
+      </Container>
     </div>
   );
 };
 
-export default HomePage;
+export default PostsPage;

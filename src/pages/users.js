@@ -1,16 +1,16 @@
-import Dashboard from '../components/Dashboard';
+import Users from '../components/Users';
 import NavBar from '../components/NavBar';
 import { Container } from '@mui/material';
 
-const HomePage = () => {
+const UsersPage = () => {
   return (
     <div>
       <NavBar />
       <Container>
-        <Dashboard />
-      </Container>  
+        <Users />
+      </Container>
     </div>
   );
 };
 
-export default HomePage;
+export default UsersPage;
